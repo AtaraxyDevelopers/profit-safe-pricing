@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "project": "profit-safe-pricing",
+  "settings": {
+    "currency": "USD",
+    "targetMargin": 20,
+    "feeRate": 3
+  },
+  "records": [
+    {
+      "id": "price-1",
+      "name": "Maintenance plan",
+      "unitCost": 50,
+      "overhead": 10,
+      "price": 100,
+      "discount": 10
+    },
+    {
+      "id": "price-2",
+      "name": "Starter package",
+      "unitCost": 80,
+      "overhead": 10,
+      "price": 100,
+      "discount": 20
+    }
+  ]
+}
