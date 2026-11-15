@@ -102,6 +102,18 @@ export const example = {
   ],
 };
 export function analyze(records, s) {
+  const belowTarget = new Set(
+    records
+      .filter((r) => {
+        const revenue = r.price * (1 - r.discount / 100);
+        const cost = r.unitCost + r.overhead + (revenue * s.feeRate) / 100;
+        return (
+          revenue === 0 || ((revenue - cost) / revenue) * 100 < s.targetMargin
+        );
+      })
+      .map((r) => r.id),
+  );
+
   const rows = records.map((r) => {
     const cost = r.unitCost + r.overhead,
       net = r.price * (1 - r.discount / 100),
@@ -126,18 +138,11 @@ export function analyze(records, s) {
   return {
     metrics: [
       metric("Offers evaluated", rows.length),
-      metric(
-        "Below target",
-        rows.filter(
-          (r) => r["Margin (%)"] === "N/A" || r["Margin (%)"] < s.targetMargin,
-        ).length,
-      ),
+      metric("Below target", rows.filter((r) => belowTarget.has(r.id)).length),
       metric("Required margin (%)", s.targetMargin),
     ],
     notices: rows
-      .filter(
-        (r) => r["Margin (%)"] === "N/A" || r["Margin (%)"] < s.targetMargin,
-      )
+      .filter((r) => belowTarget.has(r.id))
       .map((r) =>
         notice(
           r.id,

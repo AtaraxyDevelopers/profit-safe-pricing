@@ -30,3 +30,18 @@ test("Business edge cases", () => {
     );
   })(example.records, example.settings, analyze, validateState);
 });
+
+test("A rounded percentage cannot hide a margin shortfall", () => {
+  const report = analyze(
+    [
+      {
+        ...example.records[0],
+        ...{ unitCost: 40.001, overhead: 0, price: 50, discount: 0 },
+      },
+    ],
+    { ...example.settings, ...{ targetMargin: 20, feeRate: 0 } },
+    config.asOf,
+  );
+  assert.equal(report.rows[0]["Margin (%)"], 20);
+  assert.equal(report.metrics.find((m) => m.label === "Below target").value, 1);
+});
